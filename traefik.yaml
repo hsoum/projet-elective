@@ -17,44 +17,44 @@ providers:
     directory: "/etc/traefik/"
 http:
   services:
-    mon-app-api:
+    mon-app:
       loadBalancer:
-        healthCheck:
-          path: /app
-          port: 8000
+        # healthCheck:
+        #   path: /health
+        #   port: 8000
         servers:
           - url: http://mon-app:8000/
         sticky:
           cookie:
             name: mon-app-loadbalancer
             secure: true
-    comm-api:
+    comm:
       loadBalancer:
-        healthCheck:
-          path: /comm
-          port: 8000
+        # healthCheck:
+        #   path: /health
+        #   port: 8000
         servers:
           - url: http://comm:8000/
         sticky:
           cookie:
             name: comm-loadbalancer
             secure: true
-    routers:
-      mon-app-api-router:
-        rule: PathPrefix(`/app/`)
-        middlewares:
-          - strip-prefix-app@file
-        service: mon-app
-      comm-api-router:
-        rule: PathPrefix(`/comm/`)
-        middlewares:
-          - strip-prefix-comm@file
-        service: comm 
-    middlewares:
-      strip-prefix-comm:
-        stripprefix:
-          prefixes: /comm
-      strip-prefix-app:
-        stripprefix:
-          prefixes: /app
-      
+  routers:
+    mon-app-api-router:
+      rule: PathPrefix(`/app/`)
+      middlewares:
+        - strip-prefix-app@file
+      service: mon-app
+    comm-api-router:
+      rule: PathPrefix(`/comm/`)
+      middlewares:
+        - strip-prefix-comm@file
+      service: comm 
+  middlewares:
+    strip-prefix-comm:
+      stripprefix:
+        prefixes: /comm
+    strip-prefix-app:
+      stripprefix:
+        prefixes: /app
+        

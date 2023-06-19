@@ -18,19 +18,19 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik.yaml:/etc/traefik/traefik.yaml:rw
-      - ./letsencrypt:/letsencrypt3
+      - ./letsencrypt:/letsencrypt
+    networks:
+      - traefik-network
 
   mon-app:
     build:
       context: ./api/mon-app
       dockerfile: Dockerfile
     container_name: mon-app
-    working_dir: '/usr/src/app'
-    volumes:
-      - ../api:/app:rw
+    working_dir: "/usr/src/app"
     environment:
       - LISTEN_PORT=8000
-      - MONGO_URL=mongodb://mongo_database
+      # - MONGO_URL=mongodb://mongo_database
       - MSSQL_SERVER=msserver
       - MSSQL_DATABASE=CesiEat
       - MSSQL_DRIVER=msnodesqlv8
@@ -39,22 +39,14 @@ services:
     depends_on:
       - msserver
     networks:
-      traefik-network:
-        aliases:
-          - mon-app
+      - traefik-network
+      - db-network
   comm:
     build:
       context: ./api/commercial
       dockerfile: Dockerfile
     container_name: comm
-    working_dir: '/usr/src/app'
-    networks:
-      traefik-network:
-        aliases:
-          - comm
-
-    volumes:
-      - ../api:/app:rw
+    working_dir: "/usr/src/app"
     environment:
       - LISTEN_PORT=8000
       - MONGO_URL=mongodb://mongo_database
@@ -65,6 +57,8 @@ services:
       - MSSQL_PASSWORD=example_123
     depends_on:
       - msserver
+    networks:
+      - traefik-network
 
   msserver:
     image: mcmoe/mssqldocker:latest
@@ -79,6 +73,8 @@ services:
       - ./sqlserver:/var/opt/mssql/data/:rw
     labels:
       - traefik.enabled=false
+    networks:
+      - db-network
 
   mongo:
     image: mongo:latest
