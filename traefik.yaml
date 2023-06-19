@@ -1,0 +1,60 @@
+entryPoints:
+  web:
+    address: :80
+
+  websecure:
+    address: :443
+  
+log:
+  level: DEBUG
+api:
+  dashboard: true
+  insecure: true
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+  file:
+    directory: "/etc/traefik/"
+http:
+  services:
+    mon-app-api:
+      loadBalancer:
+        healthCheck:
+          path: /app
+          port: 8000
+        servers:
+          - url: http://mon-app:8000/
+        sticky:
+          cookie:
+            name: mon-app-loadbalancer
+            secure: true
+    comm-api:
+      loadBalancer:
+        healthCheck:
+          path: /comm
+          port: 8000
+        servers:
+          - url: http://comm:8000/
+        sticky:
+          cookie:
+            name: comm-loadbalancer
+            secure: true
+    routers:
+      mon-app-api-router:
+        rule: PathPrefix(`/app/`)
+        middlewares:
+          - strip-prefix-app@file
+        service: mon-app-api
+      comm-api-router:
+        rule: PathPrefix(`/comm/`)
+        middlewares:
+          - strip-prefix-comm@file
+        service: comm-api
+    middlewares:
+      strip-prefix-comm:
+        stripprefix:
+          prefixes: /comm
+      strip-prefix-app:
+        stripprefix:
+          prefixes: /app
+      

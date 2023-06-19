@@ -1,0 +1,91 @@
+version: '3.8'
+networks:
+  traefik-network:
+    driver: bridge
+  db-network:
+    driver: bridge
+
+services:
+  reverse-proxy:
+    image: traefik:v2.10
+    container_name: traefik
+    command: --providers.file.filename=/etc/traefik/traefik.yaml --configFile=/etc/traefik/traefik.yaml
+    ports:
+      - "80:80"
+      - "433:433"
+      - "8080:8080"
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.yaml:/etc/traefik/traefik.yaml:rw
+      - ./letsencrypt:/letsencrypt3
+
+  mon-app:
+    build:
+      context: ./api/mon-app
+      dockerfile: Dockerfile
+    container_name: mon-app
+    working_dir: '/usr/src/app'
+    volumes:
+      - ../api:/app:rw
+    environment:
+      - LISTEN_PORT=8000
+      - MONGO_URL=mongodb://mongo_database
+      - MSSQL_SERVER=msserver
+      - MSSQL_DATABASE=CesiEat
+      - MSSQL_DRIVER=msnodesqlv8
+      - MSSQL_USER=sa
+      - MSSQL_PASSWORD=example_123
+    depends_on:
+      - msserver
+    networks:
+      traefik-network:
+        aliases:
+          - mon-app
+  comm:
+    build:
+      context: ./api/commercial
+      dockerfile: Dockerfile
+    container_name: comm
+    working_dir: '/usr/src/app'
+    networks:
+      aliases:
+        - comm
+
+    volumes:
+      - ../api:/app:rw
+    environment:
+      - LISTEN_PORT=8000
+      - MONGO_URL=mongodb://mongo_database
+      - MSSQL_SERVER=msserver
+      - MSSQL_DATABASE=CesiEat
+      - MSSQL_DRIVER=msnodesqlv8
+      - MSSQL_USER=sa
+      - MSSQL_PASSWORD=example_123
+    depends_on:
+      - msserver
+
+  msserver:
+    image: mcmoe/mssqldocker:latest
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: example_123
+      MSSQL_USER: mssqluser
+      MSSQL_PASSWORD: example_123
+      MSSQL_DB: CesiEat
+    volumes:
+      - ./sqlserver:/var/opt/mssql/data/:rw
+    labels:
+      - traefik.enabled=false
+
+  mongo:
+    image: mongo:latest
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example_123
+    volumes:
+      - ./mongo:/data/db:rw
+    labels:
+      - traefik.enabled=false
