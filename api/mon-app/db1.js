@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
-const sequelize = new Sequelize('master', 'sa', 'ALmJhd2852J', {
-  host: 'msserver',
+const sequelize = new Sequelize('CesiEat', 'sa', 'example_123', {
+  host: 'msserver', // Use the service name as the hostname
   dialect: 'mssql',
 });
 

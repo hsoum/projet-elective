@@ -44,12 +44,12 @@ http:
         rule: PathPrefix(`/app/`)
         middlewares:
           - strip-prefix-app@file
-        service: mon-app-api
+        service: mon-app
       comm-api-router:
         rule: PathPrefix(`/comm/`)
         middlewares:
           - strip-prefix-comm@file
-        service: comm-api
+        service: comm 
     middlewares:
       strip-prefix-comm:
         stripprefix:
