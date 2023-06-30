@@ -6,6 +6,7 @@ const secretKey = process.env.JWT_SECRET;
 const jwt = require('jsonwebtoken'); // Add this line
 const jwtUtils = require('../jwtUtils');
 
+const { clients } = require('../server');
 
 const UserController = require('../controllers/userController');
 
@@ -22,8 +23,8 @@ router.post('/login', express.json(), (req, res, next) => {
       }
   
       // Generate access token and refresh token
-      const accessToken = jwtUtils.generateAccessToken(user.Id);
-      const refreshToken = jwtUtils.generateRefreshToken(user.Id);
+      const accessToken = jwtUtils.generateAccessToken(user.id);
+      const refreshToken = jwtUtils.generateRefreshToken(user.id);
 
       // Return the access token and refresh token to the client
       res.json({ accessToken, refreshToken });

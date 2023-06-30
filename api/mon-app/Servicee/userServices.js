@@ -4,7 +4,19 @@ const bcrypt = require('bcrypt');
 class UserServices {
     static async createUser(userData) {
       try {
-        const { email, password, FirstName, LastName, username, birthDate, phoneNumber } = userData;
+        const { email, password, FirstName, LastName, username, birthDate, phoneNumber,codeParrainage } = userData;
+
+        //generate code
+        let code;
+        let existingUserCode;
+
+        do {
+          // Generate a random string
+           code = await UserServices.generateRandomCode(7);
+
+          // Check if code already exists
+          existingUserCode = await Client.findOne({ where: { codeParrainage:code } });
+        } while (existingUserCode);
   
         // Check if email already exists
         const existingUser = await Client.findOne({ where: { email } });
@@ -19,7 +31,11 @@ class UserServices {
   
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
-  
+        const userBycode = await Client.findOne({ where: { codeParrainage } });
+        // Throw error if code is not empty and user is not found
+        if (codeParrainage && !userBycode) {
+          throw new Error('Invalid code');
+        }
         const user = await Client.create({
           email,
           password: hashedPassword,
@@ -28,7 +44,9 @@ class UserServices {
           username,
           birthDate,
           phoneNumber,
-          Role:'Client'
+          Role:'Client',
+          codeParrainage:code,
+          parrainageId: userBycode ? userBycode.id : null
         });
   
         return user;
@@ -93,7 +111,18 @@ class UserServices {
     }
     
   
-    // Add more methods as needed for user-related operations
+    // random code
+    static async generateRandomCode(length) {
+      let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters.charAt(randomIndex);
+  }
+
+  return result;
+    }
   }
   
   module.exports = UserServices;

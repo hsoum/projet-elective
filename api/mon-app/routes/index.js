@@ -88,4 +88,6 @@ const orderController = require('../controllers/orderController');
 // Route for creating a new food order
 router.post('/orders',authenticateToken, orderController.createOrder);
 // Route for editing an existing food order
-router.put('/orders/:orderId',authenticateToken, orderController.editOrder)
+router.put('/orders/:orderId',authenticateToken, orderController.editOrder);
+//get all orders 
+router.get('/orders', authenticateToken, orderController.getAllOrders);

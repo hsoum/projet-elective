@@ -41,6 +41,7 @@ services:
     networks:
       - traefik-network
       - db-network
+    
   comm:
     build:
       context: ./api/commercial

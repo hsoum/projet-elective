@@ -6,8 +6,8 @@ const foodOrderSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  customerName: {
-    type: String,
+  customerId: {
+    type: Number,
     required: true
   },
   items: [

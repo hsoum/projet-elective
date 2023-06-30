@@ -1,21 +1,37 @@
 const FoodOrder = require('../models/Order');
+const axios = require('axios');
+
 
 // Controller action for handling the POST request
 const createOrder = async (req, res) => {
   try {
     // Extract the order data from the request body
-    const { orderId, customerName, items, totalPrice } = req.body;
-
-    // Create a new instance of FoodOrder model with the extracted data
+    const { orderId, items, totalPrice } = req.body;
+    // Get the customerId from the authenticated user
+    const customerId = req.userId;
+    // Log the customer ID
+    
     const newOrder = new FoodOrder({
       orderId,
-      customerName,
+      customerId,
       items,
       totalPrice
     });
 
     // Save the new order to the database
     await newOrder.save();
+
+    const rsp = axios.post(`http://localhost:8002/ws/commande/post`, {
+          customerId : customerId,
+          orderId : orderId
+        });
+        rsp
+        .then(AxiosRsp => {
+          console.log(AxiosRsp)
+        })
+        .catch(error => {
+        return `unexpected catche error`
+        });
 
     res.status(201).json({ message: 'Order created successfully', order: newOrder });
   } catch (error) {
@@ -27,7 +43,7 @@ const createOrder = async (req, res) => {
 const editOrder = async (req, res) => {
     try {
       const { orderId } = req.params;
-      const { customerName, items, totalPrice } = req.body;
+      const { items, totalPrice } = req.body;
   
       // Find the order by orderId
       const order = await FoodOrder.findOne({ orderId });
@@ -41,9 +57,9 @@ const editOrder = async (req, res) => {
       if (order.isConfirmed) {
         return res.status(400).json({ message: 'Cannot edit a confirmed order' });
       }
-  
+      const customerId = req.userId;
       // Update the order fields
-      order.customerName = customerName;
+      order.customerId = customerId;
       order.items = items;
       order.totalPrice = totalPrice;
   
@@ -55,5 +71,19 @@ const editOrder = async (req, res) => {
       res.status(500).json({ message: 'Failed to update order', error: error.message });
     }
   };
+
+  const getAllOrders = async (req, res) => {
+    try {
+      // Get the customerId from the authenticated user
+      const customerId = req.userId;
   
-  module.exports = {createOrder, editOrder };
+      // Find all orders for the customer
+      const orders = await FoodOrder.find({ customerId });
+  
+      res.json({ orders });
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to retrieve orders', error: error.message });
+    }
+  };
+  
+  module.exports = {createOrder, editOrder,getAllOrders };
