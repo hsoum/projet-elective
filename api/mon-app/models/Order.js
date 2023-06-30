@@ -1,26 +1,27 @@
 const mongoose = require('mongoose');
 
+
 // Define the schema for the food order data
 const foodOrderSchema = new mongoose.Schema({
   orderId: {
     type: Number,
     required: true
   },
-  customerName: {
-    type: String,
+  customerId: {
+    type: Number,
     required: true
   },
-  items: [
+  articles: [
     {
-      name: {
-        type: String,
-        required: true
-      },
-      quantity: {
-        type: Number,
-        required: true
-      }
-    }
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Article',
+    },
+  ],
+  menus: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Menu',
+    },
   ],
   totalPrice: {
     type: Number,
@@ -31,8 +32,14 @@ const foodOrderSchema = new mongoose.Schema({
     default: false
   },
   isConfirmed: {
-    type: Boolean,
-    default: false
+    type: String,
+    required: true,
+    default: "pending",
+  },
+  restaurant_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Restaurant',
+    required: true
   }
 });
 

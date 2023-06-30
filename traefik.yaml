@@ -28,6 +28,17 @@ http:
           cookie:
             name: mon-app-loadbalancer
             secure: true
+    back-resto:
+      loadBalancer:
+        # healthCheck:
+        #   path: /health
+        #   port: 8000
+        servers:
+          - url: http://back-resto:3000/
+        sticky:
+          cookie:
+            name: back-resto-loadbalancer
+            secure: true
     comm:
       loadBalancer:
         # healthCheck:
@@ -45,6 +56,11 @@ http:
       middlewares:
         - strip-prefix-app@file
       service: mon-app
+    back-resto-api-router:
+      rule: PathPrefix(`/resto/`)
+      middlewares:
+        - strip-prefix-resto@file
+      service: back-resto
     comm-api-router:
       rule: PathPrefix(`/comm/`)
       middlewares:
@@ -57,4 +73,7 @@ http:
     strip-prefix-app:
       stripprefix:
         prefixes: /app
+    strip-prefix-resto:
+      stripprefix:
+        prefixes: /resto
         

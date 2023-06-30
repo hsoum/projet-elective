@@ -4,16 +4,16 @@ const authenticateToken = require('../Middleware/authMiddleware');
 
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
 module.exports = router;
 
 const sensors = [
-  {id:1, type:'alpha', datas:[1,2,3]},
-  {id:2, type:'beta', datas:[1,2,3], metrics:false},
-   {id:3, type:'omega', datas:{a:1,b:2}},
+  { id: 1, type: 'alpha', datas: [1, 2, 3] },
+  { id: 2, type: 'beta', datas: [1, 2, 3], metrics: false },
+  { id: 3, type: 'omega', datas: { a: 1, b: 2 } },
 ]
 const Sensor = require('../models/sensor'); // Assuming you have a Sensor model defined
 
@@ -21,7 +21,7 @@ const Sensor = require('../models/sensor'); // Assuming you have a Sensor model 
 // GET route pour récupérer les données d'un capteur spécifique
 router.get('/sensors/:id', async (req, res) => {
   const sensorId = parseInt(req.params.id);
-  
+
   try {
     const sensor = await Sensor.findOne({ id: sensorId }).exec();
 
@@ -44,7 +44,7 @@ router.get('/sensors/:id', async (req, res) => {
 router.post('/sensors', async (req, res) => {
   const { id, type, datas } = req.body;
 
-  
+
 
   try {
     const sensor = new Sensor({
@@ -82,10 +82,3 @@ router.put('/sensors/:id', (req, res) => {
 });
 
 //commande route
-
-const orderController = require('../controllers/orderController');
-
-// Route for creating a new food order
-router.post('/orders',authenticateToken, orderController.createOrder);
-// Route for editing an existing food order
-router.put('/orders/:orderId',authenticateToken, orderController.editOrder)

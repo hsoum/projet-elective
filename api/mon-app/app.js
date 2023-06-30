@@ -7,10 +7,11 @@ require('dotenv').config();
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/authtification');
+const RouteOrder = require('./routes/order');
 
 var app = express();
 
- const db = require('./db');
+const db = require('./db');
 const sequelize = require('./db1');
 
 app.use(logger('dev'));
@@ -22,9 +23,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
+app.use('/order', RouteOrder);
 
 module.exports = app;
-const {Client} = require('./models/User');
+const { Client } = require('./models/User');
 
 // Test the database connection
 // async function createe() {
@@ -48,14 +50,13 @@ const {Client} = require('./models/User');
 // createe();
 
 
-app.listen(8000, () =>
-{
+app.listen(8000, () => {
     console.log('test')
 });
-       
+
 db.on('error', console.error.bind(console, 'Connection error:'));
 db.once('open', () => {
     console.log('Connected to the database');
-    
+
 });
 

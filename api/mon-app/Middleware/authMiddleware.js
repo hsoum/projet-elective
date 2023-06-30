@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 const secretKey = process.env.JWT_SECRET;
+
 
 function authenticateToken(req, res, next) {
   // Get the access token from the request headers
@@ -14,12 +16,12 @@ function authenticateToken(req, res, next) {
   // Verify the token
   jwt.verify(token, secretKey, (err, user) => {
     if (err) {
+      console.log(err)
       return res.status(403).json({ message: 'Invalid token' });
     }
 
     // Store the user ID in the request for further processing
     req.userId = user.userId;
-
     next();
   });
 }
