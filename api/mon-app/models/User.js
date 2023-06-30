@@ -1,6 +1,6 @@
 const { sequelize, DataTypes } = require('../db1');
 
-const Client = sequelize.define('Clients', {
+const Client = sequelize.define('users', {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -42,7 +42,29 @@ const Client = sequelize.define('Clients', {
     type: DataTypes.STRING(255),
     allowNull: true,
   },
+  longitude: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+  },
+  altitude: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+  },
+  codeParrainage: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+  }, parrainageId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
 });
+Client.drop()
+  .then(() => {
+    console.log('Table User dropped successfully.');
+  })
+  .catch((error) => {
+    console.error('Error dropping table:', error);
+  });
 
 async function syncModel() {
   try {
@@ -52,6 +74,8 @@ async function syncModel() {
     console.error('Error:', error);
   }
 }
+
+
 
 syncModel();
 

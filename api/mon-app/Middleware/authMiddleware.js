@@ -8,6 +8,7 @@ function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
+
   // Check if the token exists
   if (!token) {
     return res.status(401).json({ message: 'Access token not found' });
@@ -19,7 +20,7 @@ function authenticateToken(req, res, next) {
       console.log(err)
       return res.status(403).json({ message: 'Invalid token' });
     }
-
+    console.log('User:', JSON.stringify(user.userId));
     // Store the user ID in the request for further processing
     req.userId = user.userId;
     next();

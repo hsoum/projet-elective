@@ -3,8 +3,9 @@ const secretKey = process.env.JWT_SECRET;
 
 // Generate an access token
 const generateAccessToken = (userId) => {
-  return jwt.sign({ userId }, secretKey, { expiresIn: '1h' }); // Set appropriate expiration time for the access token
+  return jwt.sign({ userId }, secretKey, { expiresIn: '1h' });
 };
+
 
 // Generate a refresh token
 const generateRefreshToken = (userId) => {

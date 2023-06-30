@@ -14,6 +14,9 @@ var app = express();
 const db = require('./db');
 const sequelize = require('./db1');
 
+const WebSocketServer = require('./server');
+
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
