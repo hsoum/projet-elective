@@ -22,6 +22,17 @@ services:
     networks:
       - traefik-network
 
+  front:
+    build:
+      context: ./api/Eats
+      dockerfile: Dockerfile
+    container_name: front
+    working_dir: "/usr/src/app"
+    environment:
+      - LISTEN_PORT=8085
+    networks:
+      - traefik-network
+
   mon-app:
     build:
       context: ./api/mon-app
@@ -29,7 +40,7 @@ services:
     container_name: mon-app
     working_dir: "/usr/src/app"
     environment:
-      - LISTEN_PORT=8000
+      - LISTEN_PORT=8005
       # - MONGO_URL=mongodb://mongo_database
       - MSSQL_SERVER=msserver
       - MSSQL_DATABASE=CesiEat
@@ -86,3 +97,11 @@ services:
       - ./mongo:/data/db:rw
     labels:
       - traefik.enabled=false
+  component_storage:
+    context: ./components/
+    dockerfile: Dockerfile
+    volumes:
+      - component_storage:/app/components
+
+volumes:
+  component_storage:

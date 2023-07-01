@@ -39,6 +39,17 @@ http:
           cookie:
             name: comm-loadbalancer
             secure: true
+    front:
+      loadBalancer:
+        # healthCheck:
+        #   path: /health
+        #   port: 8000
+        servers:
+          - url: http://front:8005/
+        sticky:
+          cookie:
+            name: front-loadbalancer
+            secure: true
   routers:
     mon-app-api-router:
       rule: PathPrefix(`/app/`)
@@ -50,6 +61,11 @@ http:
       middlewares:
         - strip-prefix-comm@file
       service: comm 
+    front-router:
+      rule: PathPrefix(`/livreur/`)
+      middlewares:
+        - strip-prefix-livreur@file
+      service: front 
   middlewares:
     strip-prefix-comm:
       stripprefix:
@@ -57,4 +73,7 @@ http:
     strip-prefix-app:
       stripprefix:
         prefixes: /app
+    strip-prefix-livreur:
+      stripprefix: 
+        prefixes: /livreur
         
