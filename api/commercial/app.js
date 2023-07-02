@@ -7,7 +7,7 @@ var logger = require('morgan');
 const path = require('path');
 const db = require('./db');
 const sequelize = require('./db1');
-
+const RouteIndex = require('./routes/index');
 const RouteUsers = require('./routes/users');
 var authRouter = require('./routes/authtification');
 
@@ -20,7 +20,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/auth', authRouter);
 app.use('/users/', RouteUsers);
-
+app.use('/index/', RouteIndex);
 
 
 

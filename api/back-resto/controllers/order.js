@@ -14,7 +14,6 @@ exports.getOrdersByRestaurantId = async (req, res) => {
                     model: 'Article'
                 }
             });
-
         res.status(200).json({ orders });
     } catch (error) {
         res.status(500).json({ message: 'Failed to retrieve orders', error: error.message });

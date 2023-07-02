@@ -39,6 +39,17 @@ http:
           cookie:
             name: back-resto-loadbalancer
             secure: true
+    front-commercial:
+      loadBalancer:
+        # healthCheck:
+        #   path: /health
+        #   port: 8000
+        servers:
+          - url: http://front-commercial:8000/
+        sticky:
+          cookie:
+            name: front-commercial-loadbalancer
+            secure: true
     comm:
       loadBalancer:
         # healthCheck:
@@ -50,12 +61,18 @@ http:
           cookie:
             name: comm-loadbalancer
             secure: true
+    
   routers:
     mon-app-api-router:
       rule: PathPrefix(`/app/`)
       middlewares:
         - strip-prefix-app@file
       service: mon-app
+    front-commercial-api-router:
+      rule: PathPrefix(`/fcommercial/`)
+      middlewares:
+        - strip-prefix-fcommercial@file
+      service: front-commercial
     back-resto-api-router:
       rule: PathPrefix(`/resto/`)
       middlewares:
@@ -66,6 +83,7 @@ http:
       middlewares:
         - strip-prefix-comm@file
       service: comm 
+    
   middlewares:
     strip-prefix-comm:
       stripprefix:
@@ -76,4 +94,6 @@ http:
     strip-prefix-resto:
       stripprefix:
         prefixes: /resto
-        
+    strip-prefix-fcommercial:
+      stripprefix:
+        prefixes: /fcommercial
