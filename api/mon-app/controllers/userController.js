@@ -16,6 +16,8 @@ class UserController {
               res.status(400).json({ error: 'Email already taken' });
             }else if (error.message === 'Phone already taken') {
                 res.status(400).json({ error: 'Phone already taken' });
+              }else if (error.message === 'Invalid code') {
+                res.status(400).json({ error: 'Invalid code' });
               } else {
               res.status(500).json({ error: 'Failed to create user' });
             }

@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
-if(
-    !mongoose.connection.readyState
+if (
+  !mongoose.connection.readyState
 )
-mongoose.connect('mongodb+srv://Diag:Diagacht7@cluster0.tnealtp.mongodb.net/', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+  mongoose.connect('mongodb+srv://Slim:Slim1234@cluster0.vfrjf6b.mongodb.net/?retryWrites=true&w=majority', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
 
 const db = mongoose.connection;
 
-module.exports= db;
+module.exports = db;

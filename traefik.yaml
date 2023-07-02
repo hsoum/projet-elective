@@ -33,16 +33,28 @@ http:
             name: mon-app-loadbalancer
             secure: true
 
-    dev-api:
+    back-resto:
       loadBalancer:
         # healthCheck:
         #   path: /health
         #   port: 8000
         servers:
-          - url: http://dev-api:8000/
+          - url: http://back-resto:3000/
         sticky:
           cookie:
-            name: dev-loadbalancer
+            name: back-resto-loadbalancer
+            secure: true
+
+    front-commercial:
+      loadBalancer:
+        # healthCheck:
+        #   path: /health
+        #   port: 8000
+        servers:
+          - url: http://front-commercial:8000/
+        sticky:
+          cookie:
+            name: front-commercial-loadbalancer
             secure: true
 
     comm:
@@ -55,6 +67,18 @@ http:
         sticky:
           cookie:
             name: comm-loadbalancer
+            secure: true
+
+    dev-api:
+      loadBalancer:
+        # healthCheck:
+        #   path: /health
+        #   port: 8000
+        servers:
+          - url: http://dev-api:8000/
+        sticky:
+          cookie:
+            name: dev-loadbalancer
             secure: true
 
     dev-front:
@@ -76,17 +100,29 @@ http:
         - strip-prefix-app@file
       service: mon-app
 
-    dev-api-router:
-      rule: PathPrefix(`/devapi/`)
+    front-commercial-api-router:
+      rule: PathPrefix(`/fcommercial/`)
       middlewares:
-        - strip-prefix-dev-api@file
-      service: dev-api
+        - strip-prefix-fcommercial@file
+      service: front-commercial
+
+    back-resto-api-router:
+      rule: PathPrefix(`/resto/`)
+      middlewares:
+        - strip-prefix-resto@file
+      service: back-resto
 
     comm-api-router:
       rule: PathPrefix(`/comm/`)
       middlewares:
         - strip-prefix-comm@file
-      service: comm 
+      service: comm
+
+    dev-api-router:
+      rule: PathPrefix(`/devapi/`)
+      middlewares:
+        - strip-prefix-dev-api@file
+      service: dev-api
 
     dev-front-router:
       rule: PathPrefix(`/dev/`)
@@ -103,14 +139,18 @@ http:
       stripprefix:
         prefixes: /app
 
-    strip-prefix-livreur:
-      stripprefix: 
-        prefixes: /livreur
+    strip-prefix-resto:
+      stripprefix:
+        prefixes: /resto
+
+    strip-prefix-fcommercial:
+      stripprefix:
+        prefixes: /fcommercial
 
     strip-prefix-dev-api:
-      stripprefix: 
+      stripprefix:
         prefixes: /devapi
 
     strip-prefix-dev-front:
-      stripprefix: 
+      stripprefix:
         prefixes: /dev

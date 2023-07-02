@@ -25,6 +25,49 @@ services:
     networks:
       - traefik-network
       - prometheus
+
+  back-resto:
+    build:
+      context: ./api/back-resto
+      dockerfile: Dockerfile
+    container_name: back-resto
+    working_dir: "/usr/src/app"
+    environment:
+      - LISTEN_PORT=3000
+      # - MONGO_URL=mongodb://mongo_database
+      - MSSQL_SERVER=msserver
+      - MSSQL_DATABASE=CesiEat
+      - MSSQL_DRIVER=msnodesqlv8
+      - MSSQL_USER=sa
+      - MSSQL_PASSWORD=example_123
+    depends_on:
+      - msserver
+    networks:
+      - traefik-network
+      - db-network
+    volumes:
+      - ./api/back-resto/public/uploads/images:/usr/src/app/public/uploads/images
+
+  front-commercial:
+    build:
+      context: ./api/front-commercial
+      dockerfile: Dockerfile
+    container_name: front-commercial
+    working_dir: "/usr/src/app"
+    environment:
+      - LISTEN_PORT=8000
+      # - MONGO_URL=mongodb://mongo_database
+      - MSSQL_SERVER=msserver
+      - MSSQL_DATABASE=CesiEat
+      - MSSQL_DRIVER=msnodesqlv8
+      - MSSQL_USER=sa
+      - MSSQL_PASSWORD=example_123
+    depends_on:
+      - msserver
+    networks:
+      - traefik-network
+      - db-network
+
   mon-app:
     build:
       context: ./api/mon-app
@@ -44,6 +87,7 @@ services:
     networks:
       - traefik-network
       - db-network
+
   comm:
     build:
       context: ./api/commercial
@@ -52,7 +96,7 @@ services:
     working_dir: "/usr/src/app"
     environment:
       - LISTEN_PORT=8000
-      - MONGO_URL=mongodb://mongo_database
+      # - MONGO_URL=mongodb://mongo_database
       - MSSQL_SERVER=msserver
       - MSSQL_DATABASE=CesiEat
       - MSSQL_DRIVER=msnodesqlv8
@@ -62,6 +106,8 @@ services:
       - msserver
     networks:
       - traefik-network
+      - db-network
+
   dev-api:
     build:
       context: ./api/dev
@@ -82,6 +128,7 @@ services:
       - traefik-network
     volumes:
       - ./api/dev:/usr/src/app:rw
+
   dev-front:
     build:
       context: ./front/dev
@@ -121,3 +168,5 @@ services:
       - ./mongo:/data/db:rw
     labels:
       - traefik.enabled=false
+    networks:
+      - db-network
