@@ -4,9 +4,12 @@ networks:
     driver: bridge
   db-network:
     driver: bridge
+  prometheus:
+    external:
+      name: prometheus_back-tier
 
 services:
-  reverse-proxy:
+  traefik:
     image: traefik:v2.10
     container_name: traefik
     command: --providers.file.filename=/etc/traefik/traefik.yaml --configFile=/etc/traefik/traefik.yaml
@@ -21,18 +24,7 @@ services:
       - ./letsencrypt:/letsencrypt
     networks:
       - traefik-network
-
-  front:
-    build:
-      context: ./api/Eats
-      dockerfile: Dockerfile
-    container_name: front
-    working_dir: "/usr/src/app"
-    environment:
-      - LISTEN_PORT=8085
-    networks:
-      - traefik-network
-
+      - prometheus
   mon-app:
     build:
       context: ./api/mon-app
@@ -70,6 +62,38 @@ services:
       - msserver
     networks:
       - traefik-network
+  dev-api:
+    build:
+      context: ./api/dev
+      dockerfile: Dockerfile
+    container_name: dev-api
+    working_dir: "/usr/src/app"
+    environment:
+      - LISTEN_PORT=8000
+      - MONGO_URL=mongodb://mongo_database
+      - MSSQL_SERVER=msserver
+      - MSSQL_DATABASE=CesiEat
+      - MSSQL_DRIVER=msnodesqlv8
+      - MSSQL_USER=sa
+      - MSSQL_PASSWORD=example_123
+    depends_on:
+      - msserver
+    networks:
+      - traefik-network
+    volumes:
+      - ./api/dev:/usr/src/app:rw
+  dev-front:
+    build:
+      context: ./front/dev
+      dockerfile: Dockerfile
+    container_name: dev-front
+    working_dir: "/usr/src/app"
+    environment:
+      - LISTEN_PORT=8080
+    networks:
+      - traefik-network
+    volumes:
+      - ./front/dev:/usr/src/app:rw
 
   msserver:
     image: mcmoe/mssqldocker:latest
@@ -97,11 +121,3 @@ services:
       - ./mongo:/data/db:rw
     labels:
       - traefik.enabled=false
-  component_storage:
-    context: ./components/
-    dockerfile: Dockerfile
-    volumes:
-      - component_storage:/app/components
-
-volumes:
-  component_storage:

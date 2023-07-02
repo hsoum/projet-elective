@@ -7,15 +7,19 @@ entryPoints:
   
 log:
   level: DEBUG
+
 api:
   dashboard: true
   insecure: true
+
 providers:
   docker:
     endpoint: "unix:///var/run/docker.sock"
   file:
     directory: "/etc/traefik/"
+
 http:
+  
   services:
     mon-app:
       loadBalancer:
@@ -28,6 +32,19 @@ http:
           cookie:
             name: mon-app-loadbalancer
             secure: true
+
+    dev-api:
+      loadBalancer:
+        # healthCheck:
+        #   path: /health
+        #   port: 8000
+        servers:
+          - url: http://dev-api:8000/
+        sticky:
+          cookie:
+            name: dev-loadbalancer
+            secure: true
+
     comm:
       loadBalancer:
         # healthCheck:
@@ -39,41 +56,61 @@ http:
           cookie:
             name: comm-loadbalancer
             secure: true
-    front:
+
+    dev-front:
       loadBalancer:
         # healthCheck:
         #   path: /health
         #   port: 8000
         servers:
-          - url: http://front:8005/
+          - url: http://dev-front:8080/
         sticky:
           cookie:
-            name: front-loadbalancer
+            name: dev-front-loadbalancer
             secure: true
+  
   routers:
     mon-app-api-router:
       rule: PathPrefix(`/app/`)
       middlewares:
         - strip-prefix-app@file
       service: mon-app
+
+    dev-api-router:
+      rule: PathPrefix(`/devapi/`)
+      middlewares:
+        - strip-prefix-dev-api@file
+      service: dev-api
+
     comm-api-router:
       rule: PathPrefix(`/comm/`)
       middlewares:
         - strip-prefix-comm@file
       service: comm 
-    front-router:
-      rule: PathPrefix(`/livreur/`)
+
+    dev-front-router:
+      rule: PathPrefix(`/dev/`)
       middlewares:
-        - strip-prefix-livreur@file
-      service: front 
+        - strip-prefix-dev-front@file
+      service: dev-front 
+  
   middlewares:
     strip-prefix-comm:
       stripprefix:
         prefixes: /comm
+
     strip-prefix-app:
       stripprefix:
         prefixes: /app
+
     strip-prefix-livreur:
       stripprefix: 
         prefixes: /livreur
-        
+
+    strip-prefix-dev-api:
+      stripprefix: 
+        prefixes: /devapi
+
+    strip-prefix-dev-front:
+      stripprefix: 
+        prefixes: /dev
