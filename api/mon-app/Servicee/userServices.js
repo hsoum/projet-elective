@@ -68,6 +68,7 @@ class UserServices {
   
     static async updateUser(userId, userData) {
       try {
+        const { email, password, FirstName, LastName, username, birthDate, phoneNumber} = userData;
         const user = await Client.findByPk(userId);
 
         // validate
@@ -82,9 +83,25 @@ class UserServices {
             throw new Error('Phone already taken');
 
         }
+        const hashedPassword = await bcrypt.hash(password, 10);
         
         // Update the user
-        await Client.update(userData, { where: { id: userId } });
+      
+        await Client.update(
+          { 
+            email,
+            password: hashedPassword,
+            FirstName,
+            LastName,
+            username,
+            birthDate,
+            phoneNumber
+          },
+          { 
+            where: { id: userId } 
+          }
+        );
+        
     
         // Fetch the updated user
         const updatedUser = await Client.findByPk(userId);

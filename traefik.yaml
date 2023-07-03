@@ -59,6 +59,30 @@ http:
             name: back-resto-loadbalancer
             secure: true
 
+
+    webs:
+      loadBalancer:
+        # healthCheck:
+        #   path: /health
+        #   port: 8000
+        servers:
+          - url: http://webs:8002/
+        sticky:
+          cookie:
+            name: webs-loadbalancer
+            secure: true
+
+    restaurateur:
+      loadBalancer:
+        # healthCheck:
+        #   path: /health
+        #   port: 8000
+        servers:
+          - url: http://restaurateur:3002/
+        sticky:
+          cookie:
+            name: restaurateur
+            secure: true
     comm:
       loadBalancer:
         servers:
@@ -104,6 +128,17 @@ http:
             name: front-commercial-loadbalancer
             secure: true
 
+    front-client:
+      loadBalancer:
+        # healthCheck:
+        #   path: /health
+        #   port: 8000
+        servers:
+          - url: http://front-client:3000/
+        sticky:
+          cookie:
+            name: front-client-loadbalancer
+            secure: true
   routers:
     grafana:
       rule: "Host(`grafana.localhost`)"
@@ -126,6 +161,11 @@ http:
         - strip-prefix-app@file
       service: mon-app
 
+    webs-api-router:
+      rule: PathPrefix(`/webs/`)
+      middlewares:
+        - strip-prefix-webs@file
+      service: webs
     back-resto-api-router:
       rule: PathPrefix(`/resto/`)
       middlewares:
@@ -156,6 +196,16 @@ http:
         - strip-prefix-fcommercial@file
       service: front-commercial
 
+    front-client-api-router:
+      rule: PathPrefix(`/frontclient/`)
+      middlewares:
+        - strip-prefix-frontclient@file
+      service: front-client 
+    restaurateur-api-router:
+      rule: PathPrefix(`/restaurateur/`)
+      middlewares:
+        - strip-prefix-restaurateur@file
+      service: restaurateur 
   middlewares:
     traefik-auth:
       basicauth:
@@ -170,6 +220,15 @@ http:
       stripprefix:
         prefixes: /back-livreur
 
+    strip-prefix-webs:
+      stripprefix:
+        prefixes: /webs
+    strip-prefix-frontclient:
+      stripprefix:
+        prefixes: /frontclient
+    strip-prefix-restaurateur:
+      stripprefix:
+        prefixes: /restaurateur
     strip-prefix-app:
       stripprefix:
         prefixes: /app
@@ -177,7 +236,6 @@ http:
     strip-prefix-resto:
       stripprefix:
         prefixes: /resto
-
     strip-prefix-dev-api:
       stripprefix:
         prefixes: /devapi

@@ -63,15 +63,8 @@ const Client = sequelize.define('User', {
     allowNull: false,
     defaultValue: false
   }
-  
+
 });
-// Client.drop()
-//   .then(() => {
-//     console.log('Table User dropped successfully.');
-//   })
-//   .catch((error) => {
-//     console.error('Error dropping table:', error);
-//   });
 
 async function syncModel() {
   try {

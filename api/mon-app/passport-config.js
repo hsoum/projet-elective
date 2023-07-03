@@ -5,6 +5,7 @@ const { ExtractJwt } = require('passport-jwt');
 const bcrypt = require('bcrypt');
 const { Client } = require('./models/User'); // Replace with your user model
 const secretKey = process.env.JWT_SECRET;
+require('dotenv').config();
 
 
 passport.use(

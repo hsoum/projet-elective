@@ -5,6 +5,8 @@ const passport = require('../passport-config');
 const secretKey = process.env.JWT_SECRET;
 const jwt = require('jsonwebtoken'); // Add this line
 const jwtUtils = require('../jwtUtils');
+require('dotenv').config();
+
 
 const { clients } = require('../server');
 
@@ -36,6 +38,7 @@ router.post('/logout', (req, res) => {
   res.clearCookie('refreshToken');
   res.sendStatus(200);
 });
+
 
 
 
