@@ -1,0 +1,149 @@
+@use '@/assets/css/vars' as vars;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*----------------------------------------------
+  FONTS
+-----------------------------------------------*/
+/* lato-regular - latin */
+/* prettier-ignore */
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: vars.$regular;
+  src: url('../fonts/lato/lato-v17-latin-regular.eot');
+  /* IE9 Compat Modes */
+  src: local(''),
+    url('../fonts/lato/lato-v17-latin-regular.eot?#iefix') format('embedded-opentype'),
+    /* IE6-IE8 */
+    url('../fonts/lato/lato-v17-latin-regular.woff2') format('woff2'),
+    /* Super Modern Browsers */
+    url('../fonts/lato/lato-v17-latin-regular.woff') format('woff'),
+    /* Modern Browsers */
+    url('../fonts/lato/lato-v17-latin-regular.ttf') format('truetype'),
+    /* Safari, Android, iOS */
+    url('../fonts/lato/lato-v17-latin-regular.svg#Lato') format('svg');
+  /* Legacy iOS */
+}
+
+/* gilroy-semibold - latin */
+/* prettier-ignore */
+@font-face {
+  font-family: 'Gilroy';
+  font-style: normal;
+  font-weight: vars.$semibold;
+  src: url('../fonts/gilroy/Gilroy-SemiBold.eot');
+  /* IE9 Compat Modes */
+  src: local(''),
+    url('../fonts/gilroy/Gilroy-SemiBold.eot?#iefix') format('embedded-opentype'),
+    /* IE6-IE8 */
+    url('../fonts/gilroy/Gilroy-SemiBold.woff') format('woff'),
+    /* Modern Browsers */
+    url('../fonts/gilroy/Gilroy-SemiBold.ttf') format('truetype'),
+    /* Safari, Android, iOS */
+}
+
+/* gilroy-bold - latin */
+/* prettier-ignore */
+@font-face {
+  font-family: 'Gilroy';
+  font-style: normal;
+  font-weight: vars.$bold;
+  src: url('../fonts/gilroy/Gilroy-Bold.eot');
+  /* IE9 Compat Modes */
+  src: local(''),
+    url('../fonts/gilroy/Gilroy-Bold.eot?#iefix') format('embedded-opentype'),
+    /* IE6-IE8 */
+    url('../fonts/gilroy/Gilroy-Bold.woff') format('woff'),
+    /* Modern Browsers */
+    url('../fonts/gilroy/Gilroy-Bold.ttf') format('truetype'),
+    /* Safari, Android, iOS */
+}
+
+/* gilroy-heavy - latin */
+/* prettier-ignore */
+@font-face {
+  font-family: 'Gilroy';
+  font-style: normal;
+  font-weight: vars.$heavy;
+  src: url('../fonts/gilroy/Gilroy-Heavy.eot');
+  /* IE9 Compat Modes */
+  src: local(''),
+    url('../fonts/gilroy/Gilroy-Heavy.eot?#iefix') format('embedded-opentype'),
+    /* IE6-IE8 */
+    url('../fonts/gilroy/Gilroy-Heavy.woff') format('woff'),
+    /* Modern Browsers */
+    url('../fonts/gilroy/Gilroy-Heavy.ttf') format('truetype'),
+    /* Safari, Android, iOS */
+}
+
+/*----------------------------------------------
+  GENERAL
+-----------------------------------------------*/
+html {
+  font-size: 62.5%;
+  color: vars.$black;
+  font-family: Lato, Arial, Helvetica, sans-serif;
+
+  * {
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+    color: inherit;
+  }
+}
+
+body {
+  font-size: 1.6rem;
+  background-color: vars.$light-cream;
+}
+
+a {
+  text-decoration: none;
+}
+
+button,
+input,
+textarea {
+  border: none;
+}
+
+.content-max-width {
+  margin: 0 auto;
+  max-width: vars.$content-max-width;
+  padding: 0px vars.$content-padding;
+  width: 100%;
+}
+
+/*------------------------------------------------
+  FORMS
+------------------------------------------------*/
+.btn {
+  border: none;
+  border-radius: vars.$border-radius;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  background-color: transparent;
+
+  &--white {
+    background-color: vars.$white;
+  }
+
+  &--red {
+    background-color: vars.$red;
+    color: vars.$white;
+  }
+
+  &--green {
+    background-color: vars.$green;
+    color: vars.$white;
+  }
+
+  &--full {
+    width: 100%;
+  }
+}

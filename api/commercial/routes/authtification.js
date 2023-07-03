@@ -24,9 +24,10 @@ router.post('/login', express.json(), (req, res, next) => {
     // Generate access token and refresh token
     const accessToken = jwtUtils.generateAccessToken(user.id);
     const refreshToken = jwtUtils.generateRefreshToken(user.id);
+    const userinfo = user;
 
     // Return the access token and refresh token to the client
-    res.json({ accessToken, refreshToken });
+    res.json({ accessToken, refreshToken, userinfo });
   })(req, res, next);
 });
 

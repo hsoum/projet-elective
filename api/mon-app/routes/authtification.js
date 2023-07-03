@@ -40,12 +40,6 @@ router.post('/logout', (req, res) => {
 
 
 
-router.post('/logout', (req, res) => {
-  // Clear the refresh token from the cookie
-  res.clearCookie('refreshToken');
-  res.sendStatus(200);
-});
-
 
 router.post('/refresh-token', (req, res) => {
   const refreshToken = req.body.refreshToken;
