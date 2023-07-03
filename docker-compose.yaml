@@ -4,9 +4,8 @@ networks:
     driver: bridge
   db-network:
     driver: bridge
-  prometheus:
-    external:
-      name: prometheus_back-tier
+  app_net:
+    driver: bridge
 
 services:
   traefik:
@@ -18,13 +17,58 @@ services:
       - "433:433"
       - "8080:8080"
     restart: unless-stopped
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "5"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik.yaml:/etc/traefik/traefik.yaml:rw
-      - ./letsencrypt:/letsencrypt
+      # - ./letsencrypt:/letsencrypt
     networks:
       - traefik-network
+      - app_net
+
+  prometheus:
+    image: prom/prometheus
+    user: root
+    container_name: prometheus
+    env_file:
+      - ".env"
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/:/etc/prometheus/:rw
+      - ${PROM_VOLUME}:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      # - 'storage.tsdb.retention.time=30D'
+    networks:
+      - traefik-network
+      - app_net
+
+  grafana:
+    image: grafana/grafana
+    user: root
+    env_file:
+      - ".env"
+    depends_on:
       - prometheus
+    volumes:
+      - ${GRAFANA_VOLUME}:/var/lib/grafana
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    environment:
+      GF_SECURITY_DISABLE_INITIAL_ADMIN_CREATION: "true"
+      GF_INSTALL_PLUGINS: grafana-piechart-panel
+    networks:
+      - app_net
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   back-resto:
     build:

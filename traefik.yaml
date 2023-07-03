@@ -1,3 +1,4 @@
+
 entryPoints:
   web:
     address: :80
@@ -12,6 +13,17 @@ api:
   dashboard: true
   insecure: true
 
+metrics:
+  prometheus:
+    entryPoint: web
+    addEntryPointsLabels: true
+    addServicesLabels: true
+    buckets:
+      - 0.1
+      - 0.3
+      - 1.2
+      - 5.0
+    
 providers:
   docker:
     endpoint: "unix:///var/run/docker.sock"
@@ -21,6 +33,17 @@ providers:
 http:
   
   services:
+    
+    grafana:
+      loadBalancer:
+        servers:
+          - url: http://grafana:3000
+      
+    prometheus:
+      loadBalancer:
+        servers:
+          - url: http://prometheus:9090
+
     mon-app:
       loadBalancer:
         # healthCheck:
@@ -94,6 +117,22 @@ http:
             secure: true
   
   routers:
+
+    grafana:
+      rule: "Host(`grafana.localhost`)"
+      service: "grafana"
+      middlewares: "traefik-auth"
+
+    traefik-ui:
+        rule: "Host(`traefik-ui.localhost`)"
+        service: "api@internal"
+        middlewares: "traefik-auth"
+
+    prometheus:
+      rule: "Host(`prom.localhost`)"
+      service: "prometheus"
+      middlewares: "traefik-auth"
+
     mon-app-api-router:
       rule: PathPrefix(`/app/`)
       middlewares:
@@ -131,6 +170,12 @@ http:
       service: dev-front 
   
   middlewares:
+
+    traefik-auth:
+      basicauth:
+        users: "admin:{SHA}0DPiKuNIrrVmD8IUCuw1hQxNqZc="
+        removeheader: true
+
     strip-prefix-comm:
       stripprefix:
         prefixes: /comm
