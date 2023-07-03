@@ -38,6 +38,9 @@ export default createStore({
     isAuthenticated(state) {
       return state.auth.jwt != null;
     },
+    GetToken(state) {
+      return state.auth.jwt;
+    },
     shoppingCartSubTotal(state) {
       const reducer = (
         total: number,

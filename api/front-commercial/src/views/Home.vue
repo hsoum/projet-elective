@@ -14,7 +14,7 @@
           <li>
             <a
               class="text-sm text-blue-600 font-bold"
-              href="#"
+              href="/Home"
               >Dashboard</a
             >
           </li>
@@ -93,21 +93,21 @@
           class="stats stats-vertical lg:stats-horizontal shadow"
         >
           <div class="stat">
-            <div class="stat-title">Downloads</div>
-            <div class="stat-value">31K</div>
-            <div class="stat-desc">Jan 1st - Feb 1st</div>
+            <div class="stat-title">Total commandes</div>
+            <div class="stat-value">{{totalA}}</div>
+            <div class="stat-desc"></div>
           </div>
 
           <div class="stat">
-            <div class="stat-title">New Users</div>
-            <div class="stat-value">4,200</div>
-            <div class="stat-desc">↗︎ 400 (22%)</div>
+            <div class="stat-title">Commandes effectués </div>
+            <div class="stat-value">{{totalB}}</div>
+            <div class="stat-desc"></div>
           </div>
 
           <div class="stat">
-            <div class="stat-title">New Registers</div>
-            <div class="stat-value">1,200</div>
-            <div class="stat-desc">↘︎ 90 (14%)</div>
+            <div class="stat-title">Commandes non effectués</div>
+            <div class="stat-value">{{totalC}}</div>
+            <div class="stat-desc"></div>
           </div>
         </div>
       </div>
@@ -140,24 +140,24 @@
               style="color: blue; font-size: 10px"
             >
               <tr>
-                <th></th>
-                <th>Name</th>
-                <th>Job</th>
-                <th>company</th>
-                <th>location</th>
-                <th>Last Login</th>
-                <th>Favorite Color</th>
+                <th>OrderID</th>
+                <th>CustomerdId</th>
+                <th>TotalPrice</th>
+                <th>isDelivered</th>
+                <th>isConfirmed</th>
+                <th>Restaurant_id</th>
+                
               </tr>
             </thead>
             <tbody>
               <tr v-for="item in responseArray" :key="item.id">
                 <th>{{ item.orderId }}</th>
-                <td>{{ item.orderId }}</td>
-                <td>{{ item.orderId }}</td>
-                <td>{{ item.orderId }}</td>
-                <td>{{ item.orderId }}</td>
-                <td>{{ item.orderId }}</td>
-                <td>{{ item.orderId }}</td>
+                <td>{{ item.customerId }}</td>
+                <td>{{ item.totalPrice }}</td>
+                <td>{{ item.isDelivered }}</td>
+                <td>{{ item.isConfirmed }}</td>
+                <td>{{ item.restaurant_id }}</td>
+                
               </tr>
             </tbody>
           </table>
@@ -191,6 +191,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import store from '@/store/index'
 
 import api from '@/api'
 
@@ -200,6 +201,9 @@ export default defineComponent({
   data() {
     return {
     responseArray: [],
+    totalA:"",
+    totalB:"",
+    totalC:"",
       discountedGoods: null,
       newAdditions: null,
       recipes: null,
@@ -208,6 +212,7 @@ export default defineComponent({
     }
   },
   created() {
+    console.log(this.responseArray);
     Promise.all([
       api.news.getLatest().then((data: any) => {
         this.news = data
@@ -229,27 +234,28 @@ export default defineComponent({
       .catch(() => this.$router.push({ name: 'NotFound' }))
   },
   mounted() {
-  const token = this.$cookies.get('accessToken');
+  const token = this.$store.getters.GetToken;
   const config = {
     headers: {
       Authorization: `Bearer ${token}`
     }
   };
-  axios.get('http://localhost/comm/index', config) // Remplacez l'URL par celle de votre API backend
+  axios.get('http://localhost/comm/index/orders', config) // Remplacez l'URL par celle de votre API backend
     .then(response => {
       this.responseArray = response.data.orders; // Stocke la réponse de l'API dans le tableau
+      this.totalA=response.data.totalOrders;
+      this.totalB=response.data.pendingOrders;
+      this.totalC=response.data.deliveredOrders;
     })
     .catch(error => {
       console.error(error);
     });
 },
-  
-
   methods: {
     // Add your custom methods here
     logout() {
       this.$cookies.remove('accessToken');
-      this.$router.push('/Accountview');
+      this.$router.push('/');
 
     },
   },
@@ -268,7 +274,6 @@ body {
 main {
   flex: 1;
 }
-
 .card-actions button {
   background-color: white;
   color: blue;

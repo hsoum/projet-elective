@@ -53,10 +53,17 @@ const Client = sequelize.define('User', {
   codeParrainage: {
     type: DataTypes.STRING(255),
     allowNull: true,
-  }, parrainageId: {
+  },
+  parrainageId: {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  isSuspended: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  }
+  
 });
 // Client.drop()
 //   .then(() => {
