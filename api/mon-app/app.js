@@ -8,6 +8,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/authtification');
 const RouteOrder = require('./routes/order');
+const RouteResto = require('./routes/restaurant');
 
 var app = express();
 
@@ -27,6 +28,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/order', RouteOrder);
+app.use('/resto', RouteResto);
 
 module.exports = app;
 const { Client } = require('./models/User');

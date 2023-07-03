@@ -1,6 +1,7 @@
 const FoodOrder = require('../models/Order');
 const Article = require('../models/article');
 const Menu = require('../models/menu');
+const resto = require('../models/restaurant')
 //const axios = require('axios');
 
 
@@ -9,8 +10,8 @@ const createOrder = async (req, res) => {
     // Extract the order data from the request body
     const { orderId, articleIds, menuIds } = req.body;
     // Get the customerId from the authenticated user
-    const customerId = req.userId;
-
+    const customerId = req.userid;
+    
     // Find the articles and calculate the total price
     const articles = await Article.find({ _id: { $in: articleIds } });
     const articleTotalPrice = articles.reduce((total, article) => total + article.price, 0);
@@ -30,7 +31,7 @@ const createOrder = async (req, res) => {
 
     const newOrder = new FoodOrder({
       orderId,
-      customerId,
+      customerId:customerId,
       articles: articleIds,
       menus: menuIds,
       totalPrice,
@@ -62,10 +63,10 @@ const createOrder = async (req, res) => {
 const editOrder = async (req, res) => {
   try {
     const { orderId, articleIds, menuIds } = req.body;
-    const customerId = req.userId;
+    const customerId = req.userid;
 
     // Find the existing order by ID
-    const order = await FoodOrder.findOne({ orderId });
+    const order = await FoodOrder.findOne({ id:orderId });
 
     // Check if the order exists
     if (!order) {
@@ -105,10 +106,11 @@ const editOrder = async (req, res) => {
 const getAllOrders = async (req, res) => {
   try {
     // Get the customerId from the authenticated user
-    const customerId = req.userId;
+    const customerId = req.userid;
 
     // Find all orders for the customer and populate the articles and menus
     const orders = await FoodOrder.find({ customerId })
+      
       .populate('articles')
       .populate({
         path: 'menus',
@@ -117,6 +119,7 @@ const getAllOrders = async (req, res) => {
           model: 'Article'
         }
       })
+      .populate('restaurant_id'); // Populate the restaurant_id field
     res.json({ orders });
   } catch (error) {
     res.status(500).json({ message: 'Failed to retrieve orders', error: error.message });

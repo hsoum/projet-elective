@@ -10,7 +10,9 @@ router.post('/', authenticateToken, upload.single('photo'), restaurantController
 
 // Get all restaurants
 router.get('/', authenticateToken, restaurantController.getAllRestaurants);
-
+// Get 10 new restaurants 
+router.get('/order', authenticateToken, restaurantController.getNewRestaurants);
+router.put('/confirm/:id', authenticateToken, restaurantController.confirmOrder);
 // Get a single restaurant by ID
 router.get('/:id', authenticateToken, restaurantController.getRestaurantById);
 
