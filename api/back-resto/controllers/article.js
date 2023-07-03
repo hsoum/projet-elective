@@ -1,7 +1,9 @@
 const Article = require('../models/article')
+const resto = require('../models/restaurant')
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
+const article = require('../models/article');
 
 exports.createArticle = (req, res) => {
     const { name, description, price, type, restaurant_id } = req.body
@@ -9,6 +11,10 @@ exports.createArticle = (req, res) => {
 
     if (!req.file) {
         return res.status(400).json({ error: 'Photo is required' });
+    }
+    restaurantid = resto.find({id:restaurant_id})
+    if (!restaurantid) {
+        return res.status(400).json({ error: 'Restaurant non existant' });
     }
     // Récupère le nom du fichier de la photo
     const photoName = req.file.filename;
@@ -39,13 +45,18 @@ exports.createArticle = (req, res) => {
 
 exports.getOneArticle = (req, res) => {
     const id = req.params.id;
-
     Article.findOne({ _id: id })
-        .then((article) => { return res.status(201).json({ article }) })
-        .catch((error) => { return res.status(400).json({ error }) })
-}
+    .populate('restaurant_id') // Populate the `restaurant_id` field with the associated Restaurant document
+    .then((articles) => {
+        return res.status(200).json({ articles });
+    })
+    .catch((error) => {
+        return res.status(400).json({ error });
+    });
+};
 exports.getAllArticles = (req, res) => {
-    Article.find()
+    Article.find({ restaurateur_id: req.userid })
+        .populate('restaurant_id') // Populate the `restaurant_id` field with the associated Restaurant document
         .then((articles) => {
             return res.status(200).json({ articles });
         })

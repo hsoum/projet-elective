@@ -50,6 +50,17 @@ http:
           cookie:
             name: comm-loadbalancer
             secure: true
+    back-livreur:
+      loadBalancer:
+        # healthCheck:
+        #   path: /health
+        #   port: 8000
+        servers:
+          - url: http://back-livreur:3005/
+        sticky:
+          cookie:
+            name: back-livreur-loadbalancer
+            secure: true
   routers:
     mon-app-api-router:
       rule: PathPrefix(`/app/`)
@@ -66,10 +77,18 @@ http:
       middlewares:
         - strip-prefix-comm@file
       service: comm 
+    back-livreur-api-router:
+      rule: PathPrefix(`/back-livreur/`)
+      middlewares:
+        - strip-prefix-back-livreur@file
+      service: back-livreur
   middlewares:
     strip-prefix-comm:
       stripprefix:
         prefixes: /comm
+    strip-prefix-back-livreur:
+      stripprefix:
+        prefixes: /back-livreur
     strip-prefix-app:
       stripprefix:
         prefixes: /app

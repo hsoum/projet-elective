@@ -3,7 +3,7 @@ const secretKey = process.env.JWT_SECRET;
 
 // Generate an access token
 const generateAccessToken = (userId) => {
-  return jwt.sign({ userId }, secretKey, { expiresIn: '1h' });
+  return jwt.sign({ userId }, secretKey, { expiresIn: '5h' });
 };
 
 

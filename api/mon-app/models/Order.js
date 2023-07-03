@@ -40,7 +40,12 @@ const foodOrderSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Restaurant',
     required: true
-  }
+  },
+  isConfirmedBydelivry: {
+    type: String,
+    required: true,
+    default: "pending",
+},
 });
 
 // Create the FoodOrder model

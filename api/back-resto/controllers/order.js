@@ -85,7 +85,7 @@ exports.confirmOrder = async (req, res) => {
         const orderId = req.params.id;
 
         // Find the order by its ID
-        const order = await FoodOrder.findOne({ restaurant_id: orderId });
+        const order = await FoodOrder.findOne({ _id: orderId });
 
         // Check if the order exists
         if (!order) {
@@ -95,6 +95,10 @@ exports.confirmOrder = async (req, res) => {
         // Check if the order is already confirmed
         if (order.isConfirmed === 'confirmed') {
             return res.status(400).json({ message: 'Order is already confirmed' });
+        }
+        // Check if the order is already confirmed
+        if (order.isConfirmed === 'refused') {
+            return res.status(400).json({ message: 'Order is already refused' });
         }
 
         // Update the order status to "confirmed"
@@ -113,7 +117,7 @@ exports.refuseOrder = async (req, res) => {
         const orderId = req.params.id;
 
         // Find the order by its ID
-        const order = await FoodOrder.findOne({ restaurant_id: orderId });
+        const order = await FoodOrder.findOne({ _id: orderId });
 
         // Check if the order exists
         if (!order) {
@@ -123,6 +127,10 @@ exports.refuseOrder = async (req, res) => {
         // Check if the order is already confirmed
         if (order.isConfirmed === 'refused') {
             return res.status(400).json({ message: 'Order is already refused' });
+        }
+        // Check if the order is already confirmed
+        if (order.isConfirmed === 'confirmed') {
+            return res.status(400).json({ message: 'Order is already confirmed' });
         }
 
         // Update the order status to "refused"
