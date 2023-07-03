@@ -14,7 +14,7 @@
           <li>
             <router-link
               class="text-sm text-gray-400 hover:text-gray-500"
-              to="/"
+              to="/Home"
             >
               Dashboard
             </router-link>
@@ -232,7 +232,7 @@ export default defineComponent({
     // Add your custom methods here
     logout() {
       this.$cookies.remove('accessToken');
-      this.$router.push('/Accountview');
+      this.$router.push('/');
 
     },
   },

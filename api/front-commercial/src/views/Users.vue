@@ -116,52 +116,46 @@
               style="color: blue; font-size: 10px"
             >
               <tr>
-                <th></th>
-                <th>Name</th>
-                <th>Job</th>
-                <th>company</th>
-                <th>location</th>
-                <th>Last Login</th>
-                <th>Favorite Color</th>
-                <th>Actions</th>
+                <th>id</th>
+                <th>LastName</th>
+                <th>FirstName</th>
+                <th>username</th>
+                <th>email</th>
+                <th>birthDate</th>
+                <th>phoneNumber</th>
+                <th>createdAt</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <th>1</th>
-                <td>Cy Ganderton</td>
-                <td>Quality Control Specialist</td>
-                <td>Littel, Schaden and Vandervort</td>
-                <td>Canada</td>
-                <td>12/16/2020</td>
-                <td>12/16/2020</td>
+              <tr v-for="item in clients" :key="item.id">
+                <th>{{ item.id }}</th>
+                <td>{{ item.LastName }}</td>
+                <td>{{ item.FirstName }}</td>
+                <td>{{ item.username }}</td>
+                <td>{{ item.email }}</td>
+                <td>{{ item.birthDate }}</td>
+                <td>{{ item.phoneNumber }}</td>
+                <td>{{ item.phoneNumber }}</td>
                 <td>
                   <div class="inline-flex items-end">
                     <router-link
                       class="text-sm text-gray-400 hover:text-gray-500"
-                      to="/EditUser"
-                    >
+                      :to="{ name: 'EditUser', params: { id: item.id } }">
                       <button class="btn btn-link">
                         Edit
                       </button>
                     </router-link>
                     <router-link
                       class="text-sm text-gray-400 hover:text-gray-500"
-                      to="/EditUser"
-                    >
+                      to="/EditUser">
                       <button class="btn btn-link">
                         Delete
                       </button>
                     </router-link>
-                    <router-link
-                      class="text-sm text-gray-400 hover:text-gray-500"
-                      to="/EditUser"
-                    >
-                      <button class="btn btn-link">
-                        Suspend
-                      </button>
-                    </router-link>
                   </div>
+                </td>
+                <td>
                 </td>
               </tr>
             </tbody>
@@ -194,7 +188,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-
+import axios from 'axios'
+import store from '@/store/index'
 import api from '@/api'
 
 export default defineComponent({
@@ -202,6 +197,7 @@ export default defineComponent({
   components: {},
   data() {
     return {
+      clients:[],
       discountedGoods: null,
       newAdditions: null,
       recipes: null,
@@ -230,11 +226,27 @@ export default defineComponent({
       .then(() => (this.loading = false))
       .catch(() => this.$router.push({ name: 'NotFound' }))
   },
+  mounted() {
+  const token = this.$store.getters.GetToken;
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  };
+  axios.get('http://localhost/comm/index/clients', config) // Remplacez l'URL par celle de votre API backend
+    .then(response => {
+      this.clients = response.data; // Stocke la réponse de l'API dans le tableau
+      console.log(this.clients);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+},
   methods: {
     // Add your custom methods here
     logout() {
       this.$cookies.remove('accessToken');
-      this.$router.push('/Accountview');
+      this.$router.push('/');
 
     },
   },

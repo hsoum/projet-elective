@@ -14,7 +14,7 @@
           <li>
             <router-link
               class="text-sm text-gray-400 hover:text-gray-500"
-              to="/"
+              to="/Home"
               >Dashboard
             </router-link>
           </li>
@@ -125,10 +125,10 @@
                       >
                       <input
                         type="text"
-                        name="full_name"
-                        id="full_name"
+                        v-model="lastname"
+                        name="lastname"
+                        id="lastname"
                         class="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
-                        value=""
                       />
                     </div>
                     <div class="md:col-span-5">
@@ -137,10 +137,10 @@
                       >
                       <input
                         type="text"
-                        name="full_name"
-                        id="full_name"
+                        v-model="firstname"
+                        name="firstname"
+                        id="firstname"
                         class="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
-                        value=""
                       />
                     </div>
                     <div class="md:col-span-5">
@@ -149,10 +149,10 @@
                       >
                       <input
                         type="text"
-                        name="full_name"
-                        id="full_name"
+                        v-model="username"
+                        name="username"
+                        id="username"
                         class="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
-                        value=""
                       />
                     </div>
 
@@ -161,12 +161,11 @@
                         >Email Address</label
                       >
                       <input
-                        type="text"
+                        type="email"
+                        v-model="email"
                         name="email"
                         id="email"
                         class="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
-                        value=""
-                        placeholder="email@domain.com"
                       />
                     </div>
                     <div class="md:col-span-5">
@@ -175,11 +174,18 @@
                       >
                       <input
                         type="text"
-                        name="full_name"
-                        id="full_name"
+                        v-model="phone"
+                        name="phone"
+                        id="phone"
                         class="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
-                        value=""
                       />
+                    </div>
+                    <div class="md:col-span-5">
+                      <label for="suspend">Suspendre</label>
+                      <select v-model="isSuspended" class="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                        <option value="true">Oui</option>
+                        <option value="false">Non</option>
+                      </select>
                     </div>
                     <div class="md:col-span-5">
                       <label for="full_name"
@@ -187,10 +193,10 @@
                       >
                       <input
                         type="password"
-                        name="full_name"
-                        id="full_name"
+                        v-model="password"
+                        name="password"
+                        id="password"
                         class="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
-                        value=""
                       />
                     </div>
 
@@ -208,6 +214,7 @@
                         </router-link>
                         <button
                           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                          @click="updateClient"
                         >
                           Envoyer
                         </button>
@@ -258,7 +265,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-
+import axios from 'axios'
 import api from '@/api'
 
 export default defineComponent({
@@ -266,6 +273,14 @@ export default defineComponent({
   components: {},
   data() {
     return {
+      id: '' ,
+      lastname : '',
+      firstname : '',
+      username : '',
+      email : '',
+      phone : '',
+      password : '',
+      isSuspended:false,
       discountedGoods: null,
       newAdditions: null,
       recipes: null,
@@ -274,6 +289,18 @@ export default defineComponent({
     }
   },
   created() {
+    // Récupérer l'ID à partir de l'URL
+  const url = window.location.pathname;
+  const parts = url.split('/');
+  const id = parts[parts.length - 1];
+  this.id = id;
+  console.log(id);
+  // Autres actions
+  this.getClientData();
+
+
+  //FONCTION POUR Recupéré les données de la route 
+
     Promise.all([
       api.news.getLatest().then((data: any) => {
         this.news = data
@@ -296,12 +323,60 @@ export default defineComponent({
   },
 
   methods: {
+
+    getClientData() {
+      const clientId = this.id; // Récupérer l'ID depuis la variable data
+      axios.get(`http://localhost/comm/index/client/${clientId}`)
+        .then((response) => {
+          const clientData = response.data;
+          this.lastname = clientData.LastName;
+          this.firstname = clientData.FirstName;
+          this.username = clientData.username;
+          this.email = clientData.email;
+          this.phone = clientData.phoneNumber;
+          this.isSuspended = clientData.isSuspended;
+          this.password = "";
+          
+          console.log(clientData);
+        })
+        .catch((error) => {
+          // Gérer les erreurs de la requête
+          console.error(error);
+        });
+    },
     // Add your custom methods here
     logout() {
       this.$cookies.remove('accessToken');
-      this.$router.push('/Accountview');
+      this.$router.push('/');
 
     },
+
+     // ...
+  updateClient() {
+    const clientId = this.id; // Récupérer l'ID depuis la variable data
+    const updatedClient = {
+      Lastname: this.lastname,
+      Firstname: this.firstname,
+      username: this.username,
+      email: this.email,
+      phoneNumber: this.phone,
+      isSuspended: this.isSuspended,
+      password: this.password,
+    };
+
+    axios.put(`http://localhost/comm/index/client/${clientId}`, updatedClient)
+      .then((response) => {
+        // Gérer la réponse de la mise à jour du client
+        console.log(response.data);
+        this.$router.push('/Users');
+      })
+      .catch((error) => {
+        // Gérer les erreurs de la requête
+        console.error(error);
+      });
+  },
+  // ...
+  
   },
 })
 </script>

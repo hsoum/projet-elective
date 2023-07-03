@@ -10,12 +10,12 @@ import Stat from '@/views/Stat.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/',
+    path: '/Home',
     name: 'Home',
     component: Home,
   },
   {
-    path: '/AccountView',
+    path: '/',
     name: 'AccountView',
     component: AccountView,
   },
@@ -25,7 +25,7 @@ const routes: Array<RouteRecordRaw> = [
     component: Users,
   },
   {
-    path: '/EditUser',
+    path: '/EditUser/:id',
     name: 'EditUser',
     component: EditUser,
   },
@@ -46,12 +46,17 @@ const router = createRouter({
   routes,
 })
 
-// router.beforeEach(async function (to, from, next) {
-//   if (store.getters.isAuthenticated) {
-//     next();
-//   } else {
-//     next({ name: 'AccountView' });
-//   }
-// })
+router.beforeEach(async function (to, from, next) {
+  if(to.name == 'AccountView'){
+    next();
+  }else{
+    if(store.getters.isAuthenticated) {
+      next();
+  }else{
+    next({ name: 'AccountView' });
+  }
+}
+  
+})
 
 export default router

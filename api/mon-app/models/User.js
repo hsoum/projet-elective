@@ -1,6 +1,6 @@
 const { sequelize, DataTypes } = require('../db1');
 
-const Client = sequelize.define('users', {
+const Client = sequelize.define('User', {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -53,18 +53,25 @@ const Client = sequelize.define('users', {
   codeParrainage: {
     type: DataTypes.STRING(255),
     allowNull: true,
-  }, parrainageId: {
+  },
+  parrainageId: {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  isSuspended: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  }
+  
 });
-Client.drop()
-  .then(() => {
-    console.log('Table User dropped successfully.');
-  })
-  .catch((error) => {
-    console.error('Error dropping table:', error);
-  });
+// Client.drop()
+//   .then(() => {
+//     console.log('Table User dropped successfully.');
+//   })
+//   .catch((error) => {
+//     console.error('Error dropping table:', error);
+//   });
 
 async function syncModel() {
   try {

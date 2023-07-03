@@ -59,6 +59,7 @@
 <script lang="ts">
 import TheFooter from '@/components/TheFooter.vue'
 import axios from 'axios'
+import store from '@/store/index'
 
 export default {
   components: {
@@ -86,14 +87,14 @@ export default {
           const refreshToken = response.data.refreshToken
           const userinfo = response.data.userinfo
 
-          this.store.commit("login", {accessToken,refreshToken,userinfo});
-          // Stocker le jeton d'accès dans le stockage local (localStorage)
-          // localStorage.setItem('accessToken', accessToken)
-          // this.$cookies.set('accessToken', accessToken)
-          // localStorage.setItem('refreshToken', refreshToken)
-          // this.$cookies.set('refreshToken', refreshToken)
-          // Rediriger vers la page d'accueil ou autre
-          this.$router.push('/')
+          this.$store.commit("login", {accessToken,refreshToken,userinfo});
+         // Stocker le jeton d'accès dans le stockage local (localStorage)
+          localStorage.setItem('accessToken', accessToken)
+          this.$cookies.set('accessToken', accessToken)
+          localStorage.setItem('refreshToken', refreshToken)
+          this.$cookies.set('refreshToken', refreshToken)
+          //Rediriger vers la page d'accueil ou autre
+          this.$router.push('/Home')
           console.log(accessToken)
         })
         .catch((error) => {
@@ -108,7 +109,7 @@ export default {
           } else {
             // Une erreur s'est produite lors de la requête
             this.errorMessage =
-              'Erreur lors de la connexion'
+             error
           }
         })
     },
