@@ -4,6 +4,7 @@ const restaurant = mongoose.Schema({
     name: {
         type: String,
         required: true,
+        unique: true,
     },
     description: {
         type: String,
@@ -16,7 +17,25 @@ const restaurant = mongoose.Schema({
     restaurateur_id: {
         type: String,
         required: true
-    }
+    },
+    longitude: {
+        type: String,
+        required: true
+    },
+    latitude: {
+        type: String,
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        required: false
+      },
+      
+    phoneNumber: {
+        type:String,
+        required:false,
+        unique: true,
+      }
 });
 
-module.exports = mongoose.model('Restaurant', restaurant);
+module.exports = mongoose.model('Restaurant', restaurant); 

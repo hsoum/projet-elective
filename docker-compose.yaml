@@ -61,6 +61,26 @@ services:
     networks:
       - traefik-network
       - db-network
+
+  webs:
+    build:
+      context: ./api/webs
+      dockerfile: Dockerfile
+    container_name: webs
+    working_dir: "/usr/src/app"
+    environment:
+      - LISTEN_PORT=8002
+      # - MONGO_URL=mongodb://mongo_database
+      - MSSQL_SERVER=msserver
+      - MSSQL_DATABASE=CesiEat
+      - MSSQL_DRIVER=msnodesqlv8
+      - MSSQL_USER=sa
+      - MSSQL_PASSWORD=example_123
+    depends_on:
+      - msserver
+    networks:
+      - traefik-network
+      - db-network
     
   comm:
     build:
@@ -82,6 +102,49 @@ services:
       - traefik-network
       - db-network
 
+  front-client:
+    build:
+      context: ./api/Client
+      dockerfile: Dockerfile
+    container_name: front-client
+    working_dir: "/usr/src/app"
+    environment:
+      - LISTEN_PORT=3000
+      # - MONGO_URL=mongodb://mongo_database
+      - MSSQL_SERVER=msserver
+      - MSSQL_DATABASE=CesiEat
+      - MSSQL_DRIVER=msnodesqlv8
+      - MSSQL_USER=sa
+      - MSSQL_PASSWORD=example_123
+    depends_on:
+      - msserver
+    networks:
+      - traefik-network
+      - db-network
+    volumes:
+      - ./api/back-resto/public/uploads/images:/usr/src/app/public/uploads/images
+   
+
+  restaurateur:
+    build:
+      context: ./api/restaurateur
+      dockerfile: Dockerfile
+    container_name: restaurateur
+    working_dir: "/usr/src/app"
+    environment:
+      - LISTEN_PORT=3002
+      # - MONGO_URL=mongodb://mongo_database
+      - MSSQL_SERVER=msserver
+      - MSSQL_DATABASE=CesiEat
+      - MSSQL_DRIVER=msnodesqlv8
+      - MSSQL_USER=sa
+      - MSSQL_PASSWORD=example_123
+    depends_on:
+      - msserver
+    networks:
+      - traefik-network
+      - db-network
+
   msserver:
     image: mcmoe/mssqldocker:latest
     restart: unless-stopped
@@ -91,6 +154,8 @@ services:
       MSSQL_USER: mssqluser
       MSSQL_PASSWORD: example_123
       MSSQL_DB: CesiEat
+    ports:
+      - "1433:1433"
     volumes:
       - ./sqlserver:/var/opt/mssql/data/:rw
     labels:

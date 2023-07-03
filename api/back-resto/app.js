@@ -44,7 +44,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // createe();
 
-mongoose.connect('mongodb+srv://Slim:Slim1234@cluster0.vfrjf6b.mongodb.net/?retryWrites=true&w=majority').then(() => {
+mongoose.connect('mongodb+srv://Dexter366:aymirou36@cluster0.xzphj9y.mongodb.net/').then(() => {
     console.log('Connexion Success !')
 }).catch((error) => {
     console.log(error);

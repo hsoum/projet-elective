@@ -1,0 +1,20 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.web.json",
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
+  "compilerOptions": {
+    
+    "ignoreDeprecations": "5.0",
+    "verbatimModuleSyntax": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "lib": ["es2018", "dom", "esnext"] 
+  },
+
+  "references": [
+    {
+      "path": "./tsconfig.vite-config.json"
+    }
+  ],
+}

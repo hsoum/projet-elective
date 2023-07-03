@@ -1,3 +1,4 @@
+var cors = require('cors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -10,6 +11,7 @@ var authRouter = require('./routes/authtification');
 const RouteOrder = require('./routes/order');
 
 var app = express();
+app.use(cors());
 
 const db = require('./db');
 const sequelize = require('./db1');

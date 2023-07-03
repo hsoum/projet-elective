@@ -45,7 +45,7 @@ exports.getOneArticle = (req, res) => {
         .catch((error) => { return res.status(400).json({ error }) })
 }
 exports.getAllArticles = (req, res) => {
-    Article.find()
+    Article.find({ restaurateur_id: req.userid})
         .then((articles) => {
             return res.status(200).json({ articles });
         })
