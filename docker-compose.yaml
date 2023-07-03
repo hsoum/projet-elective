@@ -151,6 +151,25 @@ services:
     networks:
       - traefik-network
       - db-network
+  back-livreur:
+    build:
+      context: ./api/back-livreur
+      dockerfile: Dockerfile
+    container_name: back-livreur
+    working_dir: "/usr/src/app"
+    environment:
+      - LISTEN_PORT=3005
+      # - MONGO_URL=mongodb://mongo_database
+      - MSSQL_SERVER=msserver
+      - MSSQL_DATABASE=CesiEat
+      - MSSQL_DRIVER=msnodesqlv8
+      - MSSQL_USER=sa
+      - MSSQL_PASSWORD=example_123
+    depends_on:
+      - msserver
+    networks:
+      - traefik-network
+      - db-network
 
   dev-api:
     build:
@@ -195,6 +214,9 @@ services:
       MSSQL_USER: mssqluser
       MSSQL_PASSWORD: example_123
       MSSQL_DB: CesiEat
+    ports:
+      - "1433:1433" 
+
     volumes:
       - ./sqlserver:/var/opt/mssql/data/:rw
     labels:

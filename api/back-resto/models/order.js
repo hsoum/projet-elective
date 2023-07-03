@@ -41,6 +41,7 @@ const foodOrderSchema = new mongoose.Schema({
         ref: 'Restaurant',
         required: true
     }
+    
 });
 
 // Create the FoodOrder model

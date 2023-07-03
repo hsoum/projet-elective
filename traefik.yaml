@@ -1,11 +1,10 @@
-
 entryPoints:
   web:
     address: :80
 
   websecure:
     address: :443
-  
+
 log:
   level: DEBUG
 
@@ -23,7 +22,7 @@ metrics:
       - 0.3
       - 1.2
       - 5.0
-    
+
 providers:
   docker:
     endpoint: "unix:///var/run/docker.sock"
@@ -31,14 +30,12 @@ providers:
     directory: "/etc/traefik/"
 
 http:
-  
   services:
-    
     grafana:
       loadBalancer:
         servers:
           - url: http://grafana:3000
-      
+
     prometheus:
       loadBalancer:
         servers:
@@ -46,9 +43,6 @@ http:
 
     mon-app:
       loadBalancer:
-        # healthCheck:
-        #   path: /health
-        #   port: 8000
         servers:
           - url: http://mon-app:8000/
         sticky:
@@ -58,9 +52,6 @@ http:
 
     back-resto:
       loadBalancer:
-        # healthCheck:
-        #   path: /health
-        #   port: 8000
         servers:
           - url: http://back-resto:3000/
         sticky:
@@ -68,23 +59,8 @@ http:
             name: back-resto-loadbalancer
             secure: true
 
-    front-commercial:
-      loadBalancer:
-        # healthCheck:
-        #   path: /health
-        #   port: 8000
-        servers:
-          - url: http://front-commercial:8000/
-        sticky:
-          cookie:
-            name: front-commercial-loadbalancer
-            secure: true
-
     comm:
       loadBalancer:
-        # healthCheck:
-        #   path: /health
-        #   port: 8000
         servers:
           - url: http://comm:8000/
         sticky:
@@ -92,11 +68,17 @@ http:
             name: comm-loadbalancer
             secure: true
 
+    back-livreur:
+      loadBalancer:
+        servers:
+          - url: http://back-livreur:3005/
+        sticky:
+          cookie:
+            name: back-livreur-loadbalancer
+            secure: true
+
     dev-api:
       loadBalancer:
-        # healthCheck:
-        #   path: /health
-        #   port: 8000
         servers:
           - url: http://dev-api:8000/
         sticky:
@@ -106,44 +88,43 @@ http:
 
     dev-front:
       loadBalancer:
-        # healthCheck:
-        #   path: /health
-        #   port: 8000
         servers:
           - url: http://dev-front:8080/
         sticky:
           cookie:
             name: dev-front-loadbalancer
             secure: true
-  
-  routers:
 
+    front-commercial:
+      loadBalancer:
+        servers:
+          - url: http://front-commercial:8000/
+        sticky:
+          cookie:
+            name: front-commercial-loadbalancer
+            secure: true
+
+  routers:
     grafana:
       rule: "Host(`grafana.localhost`)"
-      service: "grafana"
-      middlewares: "traefik-auth"
+      service: grafana
+      middlewares: traefik-auth
 
     traefik-ui:
-        rule: "Host(`traefik-ui.localhost`)"
-        service: "api@internal"
-        middlewares: "traefik-auth"
+      rule: "Host(`traefik-ui.localhost`)"
+      service: api@internal
+      middlewares: traefik-auth
 
     prometheus:
       rule: "Host(`prom.localhost`)"
-      service: "prometheus"
-      middlewares: "traefik-auth"
+      service: prometheus
+      middlewares: traefik-auth
 
     mon-app-api-router:
       rule: PathPrefix(`/app/`)
       middlewares:
         - strip-prefix-app@file
       service: mon-app
-
-    front-commercial-api-router:
-      rule: PathPrefix(`/fcommercial/`)
-      middlewares:
-        - strip-prefix-fcommercial@file
-      service: front-commercial
 
     back-resto-api-router:
       rule: PathPrefix(`/resto/`)
@@ -167,10 +148,15 @@ http:
       rule: PathPrefix(`/dev/`)
       middlewares:
         - strip-prefix-dev-front@file
-      service: dev-front 
-  
-  middlewares:
+      service: dev-front
 
+    front-commercial-api-router:
+      rule: PathPrefix(`/fcommercial/`)
+      middlewares:
+        - strip-prefix-fcommercial@file
+      service: front-commercial
+
+  middlewares:
     traefik-auth:
       basicauth:
         users: "admin:{SHA}0DPiKuNIrrVmD8IUCuw1hQxNqZc="
@@ -180,6 +166,10 @@ http:
       stripprefix:
         prefixes: /comm
 
+    strip-prefix-back-livreur:
+      stripprefix:
+        prefixes: /back-livreur
+
     strip-prefix-app:
       stripprefix:
         prefixes: /app
@@ -188,10 +178,6 @@ http:
       stripprefix:
         prefixes: /resto
 
-    strip-prefix-fcommercial:
-      stripprefix:
-        prefixes: /fcommercial
-
     strip-prefix-dev-api:
       stripprefix:
         prefixes: /devapi
@@ -199,3 +185,7 @@ http:
     strip-prefix-dev-front:
       stripprefix:
         prefixes: /dev
+
+    strip-prefix-fcommercial:
+      stripprefix:
+        prefixes: /fcommercial
